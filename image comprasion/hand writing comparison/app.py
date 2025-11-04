@@ -6,8 +6,8 @@ import cv2
 from src.features import preprocess_and_featurize
 from src.compare import cosine_similarity, decide
 
-st.set_page_config(page_title="AI Handwriting Comparator", page_icon="✍️", layout="wide")
-st.title("✍️ AI Handwriting Comparison")
+st.set_page_config(page_title="AI Handwriting Comparator", page_icon="", layout="wide")
+st.title(" AI Handwriting Comparison")
 st.caption("Educational demo — compares two handwriting images and predicts Same/Different writer")
 
 with st.sidebar:
@@ -36,7 +36,7 @@ def ensure_uint8(img):
     img = np.clip(img, 0, 255)
     return img.astype(np.uint8)
 
-btn = st.button("🔍 Compare", use_container_width=True, type="primary")
+btn = st.button(" Compare", use_container_width=True, type="primary")
 
 cnn_available = False
 if use_cnn:
