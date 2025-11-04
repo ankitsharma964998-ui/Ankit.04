@@ -12,19 +12,16 @@ def _adaptive_binarize(img):
     return bin_img
 
 def _deskew(gray):
-    # Edge + Hough line angle estimate
     edges = cv2.Canny(gray, 50, 150, apertureSize=3)
     lines = cv2.HoughLines(edges, 1, np.pi/180, 120)
     angle = 0.0
     if lines is not None and len(lines) > 0:
-        # Use median angle of detected lines around horizontal
         angs = []
         for rho, theta in lines[:,0,:]:
-            a = (theta - np.pi/2)  # around 0 if near horizontal text lines
+            a = (theta - np.pi/2) 
             angs.append(a)
         angle = np.median(angs) * 180/np.pi
-        angle = np.clip(angle, -10, 10)  # keep reasonable
-    # rotate using skimage to avoid cropping
+        angle = np.clip(angle, -10, 10)  
     rotated = rotate(gray, angle, resize=False, mode='edge', preserve_range=True).astype(np.uint8)
     return rotated, angle
 
@@ -38,7 +35,6 @@ def preprocess(image_bgr, target=256):
     deskewed, angle = _deskew(gray)
     bin_img = _adaptive_binarize(deskewed)
 
-    # center-pad to square, then resize
     h, w = bin_img.shape
     side = max(h, w)
     pad_top = (side - h) // 2
@@ -59,7 +55,6 @@ def _lbp_hist(img, P=8, R=1):
     return hist
 
 def _ink_ratio(img):
-    # assuming white background 0, ink=255 after binarization invert if necessary
     ink = (img > 0).sum()
     return ink / img.size
 
@@ -78,23 +73,18 @@ def _contour_complexity(img):
     return (np.mean(perims) / (np.mean(areas) ** 0.5))
 
 def extract_features(bin_img):
-    # HOG
     hog_vec = hog(bin_img, pixels_per_cell=(16,16), cells_per_block=(2,2),
                   feature_vector=True, orientations=9, block_norm='L2-Hys')
 
-    # LBP
     lbp_vec = _lbp_hist(bin_img, P=8, R=1)
 
-    # Simple stats
     stats = np.array([
         _ink_ratio(bin_img),
         _edge_density(bin_img),
         _contour_complexity(bin_img),
     ], dtype=np.float32)
 
-    # concatenate
-    feat = np.concatenate([hog_vec, lbp_vec, stats], axis=0).astype(np.float32)
-    # normalize
+    feat = np.concatenate([hog_vec, lbp_vec, stats], axis=0).astype(np.float32
     norm = np.linalg.norm(feat) + 1e-8
     feat = feat / norm
     return feat
