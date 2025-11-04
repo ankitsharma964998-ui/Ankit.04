@@ -38,7 +38,6 @@ def ensure_uint8(img):
 
 btn = st.button("🔍 Compare", use_container_width=True, type="primary")
 
-# Optional CNN
 cnn_available = False
 if use_cnn:
     try:
@@ -62,10 +61,8 @@ if btn:
             try:
                 emb1 = extract_embedding(proc1)
                 emb2 = extract_embedding(proc2)
-                # Concatenate classical + CNN embeddings
                 feat1 = np.concatenate([feat1, emb1]).astype(np.float32)
                 feat2 = np.concatenate([feat2, emb2]).astype(np.float32)
-                # L2 normalize concatenated features
                 for v in (feat1, feat2):
                     n = np.linalg.norm(v) + 1e-8
                     v /= n
