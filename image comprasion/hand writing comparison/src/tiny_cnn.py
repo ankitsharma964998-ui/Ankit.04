@@ -24,7 +24,6 @@ class TinyCNN(nn.Module):
 
 def extract_embedding(gray_256, device='cpu'):
     model = TinyCNN(128).to(device).eval()
-    # Optional: try to load weights if present
     try:
         state = torch.load('cnn_weights.pth', map_location=device)
         model.load_state_dict(state)
