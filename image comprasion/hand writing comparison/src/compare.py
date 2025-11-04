@@ -6,6 +6,5 @@ def cosine_similarity(a, b):
     return float(np.dot(a, b) / denom)
 
 def decide(similarity, threshold=0.5):
-    # similarity in [0..1]; higher means more similar
     same = similarity >= threshold
     return same, ("Same Writer ✅" if same else "Different Writer ❌")
